@@ -6,6 +6,8 @@ const { Server } = require("socket.io");
 const io = new Server(server);
 const dotenv = require('dotenv');
 
+dotenv.config();
+
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
