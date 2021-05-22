@@ -3,9 +3,9 @@ const dotenv = require('dotenv');
 // const socketIO = require('socket.io');
 
 // const INDEX = '/index.html';
-const PORT = process.env.port || 3000;
 
 dotenv.config();
+const PORT = process.env.PORT || 3000;
 
 const server = express();
 
