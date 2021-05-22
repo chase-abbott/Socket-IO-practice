@@ -7,11 +7,9 @@ const PORT = process.env.port || 3000;
 
 dotenv.config();
 
-const server = express().listen(PORT, () => console.log(`Listening on ${PORT}`));
+const server = express();
 
-server.get('/', (req, res) => {
-  res.send('Welcome to the socket io')
-})
+server.listen(PORT, () => console.log(`Listening on ${PORT}`))
 
 // const io = socketIO(server)
 
