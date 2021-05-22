@@ -21,7 +21,7 @@ io.on('connection', (socket) => {
   })
 });
 
-const port = process.env.port || 8001;
+const port = process.env.port;
 
 server.listen(port, () => {
   console.log(`listening on port ${port}`);
