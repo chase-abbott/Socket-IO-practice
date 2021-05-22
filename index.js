@@ -1,22 +1,25 @@
-const express = require('express');
-const dotenv = require('dotenv');
-// const socketIO = require('socket.io');
 
-// const INDEX = '/index.html';
+const dotenv = require('dotenv');
+
+const express = require('express');
+const app = express();
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server);
 
 dotenv.config();
+
 const PORT = process.env.PORT || 3000;
 
-const server = express();
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/index.html');
+});
 
 server.listen(PORT, () => console.log(`Listening on ${PORT}`))
 
-// const io = socketIO(server)
-
-// io.on('connection', (socket) => {
-//   console.log('Client connected');
-//   socket.on('disconnect', () => console.log('Client disconnected'));
-//   socket.on('chat message', (msg) => {
-//     io.emit('chat message', msg);
-//   })
-// });
+io.on('connection', (socket) => {
+  socket.on('chat message', (msg) => {
+    io.emit('chat message', msg);
+  });
+});
