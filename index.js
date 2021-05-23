@@ -7,7 +7,13 @@ app.use(cors());
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
-const io = new Server(server);
+
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3001",
+    methods: ["GET", "POST"]                                                       
+  }
+})
 
 dotenv.config();
 
@@ -20,7 +26,9 @@ app.get('/', (req, res) => {
 server.listen(PORT, () => console.log(`Listening on ${PORT}`))
 
 io.on('connection', (socket) => {
+  console.log('connected')
   socket.on('chat message', (msg) => {
+    console.log(msg)
     io.emit('chat message', msg);
   });
 });
