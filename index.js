@@ -15,7 +15,7 @@ const io = new Server(server, {
   }
 })
 
-dotenv.config();
+dotenv.config();   
 
 const PORT = process.env.PORT || 3000;
 
@@ -24,11 +24,102 @@ app.get('/', (req, res) => {
 });
 
 server.listen(PORT, () => console.log(`Listening on ${PORT}`))
-
+const users = [];
+const draftedPlayers = [];
+let userOneDrafted = []
+let userTwoDrafted = []
+let userThreeDrafted = []
 io.on('connection', (socket) => {
+ // restoring state
+ //socket integeration run on same server but differant port
+ //checking authentication on socket, send initial authenticate message
+//  io.emit('logged in', users1)
   console.log('connected')
-  socket.on('chat message', (msg) => {
-    console.log(msg)
-    io.emit('chat message', msg);
-  });
+  socket.on('logged-in', user => {
+    if(users.length < 3){
+      users.push({user: user, socketId: socket.id})
+    }
+    if(users.length === 3){
+      socket.emit('logged-in', users)
+    }
+    console.log(users)
+  })
+  socket.on('stateChange', change => {
+    console.log(change)
+    draftedPlayers.push(change);
+    userOneDrafted = getUserOneDrafted(users, draftedPlayers)
+    userTwoDrafted = getUserTwoDrafted(users, draftedPlayers)
+    userThreeDrafted = getUserThreeDrafted(users, draftedPlayers)
+    // console.log('drafted players', draftedPlayers)
+    // console.log('user1', userOneDrafted, 'user2', userTwoDrafted, 'user3', userThreeDrafted)
+    io.emit('stateChange', draftedPlayers, userOneDrafted, userTwoDrafted, userThreeDrafted)
+  })
+
 });
+
+// let i = 0;
+// let j = 0;
+// let users;
+// let user;
+// const clients = []
+// io.on('connection', (client) => {
+//   clients.push(client.id)
+//  client.on('initial', initialUsers => {
+//    if (users !== initialUsers) {
+//      users = initialUsers
+//    }
+//    console.log(users)
+//    client.emit('currentUser', users[j])
+//  })
+
+//   console.log('connected')
+//   client.on('subscribeToTimer', (interval) => {
+//     console.log(`${client.id} is subscribing to timer with interval `, interval);
+//     let myInterval = setInterval(() => {
+//       i++
+      
+//       client.emit('timer', new Date());
+//       if(i === 10){ 
+//         clearInterval(myInterval)
+//         i = 0
+//         j++
+//         client.emit('currentUser', users[j])
+//         client.emit('mess', 'times up')
+        
+//       }
+      
+      
+//     }, interval);
+//   });
+//   client.on('something', something => {
+//     console.log(something)
+//   });
+// });
+  // socket.on('chat message', (msg, user) => {
+  //   console.log(msg)
+  //   io.emit('chat message', msg, user);  
+  // });
+  // socket.on('change', (change) => {
+  //   console.log(change)
+  //   io.emit('change', change)
+
+  // })
+
+function getUserOneDrafted (users, draftedPlayers){
+  const userOneDrafted = draftedPlayers.filter(player => {
+      return player.userName === users[0].user;
+  });
+   return userOneDrafted
+}
+function getUserTwoDrafted (users, draftedPlayers){
+  const userTwoDrafted = draftedPlayers.filter(player => {
+      return player.userName === users[1].user;
+  });
+   return userTwoDrafted
+}
+function getUserThreeDrafted (users, draftedPlayers){
+  const userThreeDrafted = draftedPlayers.filter(player => {
+      return player.userName === users[2].user;
+  });
+   return userThreeDrafted
+}
