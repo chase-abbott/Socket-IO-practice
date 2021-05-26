@@ -9,7 +9,7 @@ const server = http.createServer(app);
 const { Server } = require('socket.io');
 const io = new Server(server, {
   cors: {
-    origin: 'https://mystifying-bardeen-9951c5.netlify.app/',
+    origin: 'https://mystifying-bardeen-9951c5.netlify.app/draft',
     // origin: 'http://localhost:3001',
     methods: ['GET', 'POST']                                                       
   }
