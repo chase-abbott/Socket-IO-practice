@@ -36,7 +36,7 @@ let userThreeDrafted = [];
 let interval = 1000;
 let i = 0;
 let j = 0;
-let time = 5;
+let time = 15;
 let numberOfPlayers = 3
 io.on('connection', (socket) => {
 
@@ -99,7 +99,7 @@ io.on('connection', (socket) => {
    userOneDrafted = [];
    userTwoDrafted = [];
    userThreeDrafted = [];
-   draftedPlayers = []
+   draftedPlayers = [];
  })
  
 
