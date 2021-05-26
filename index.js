@@ -9,7 +9,7 @@ const server = http.createServer(app);
 const { Server } = require('socket.io');
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:3001',
+    origin: 'http://localhost:3000',
     methods: ['GET', 'POST']                                                       
   }
 });
@@ -56,7 +56,11 @@ io.on('connection', (socket) => {
             i++
             j = 0;
             io.emit('change', draftedPlayers)
-            if(i === numberOfPlayers)  { clearInterval(myInterval) ;}
+            if(i === numberOfPlayers)  { 
+              clearInterval(myInterval) 
+            io.emit
+            
+            }
             // io.emit('currentUser', users[i])
             // io.emit('mess', 'times up') 
 
