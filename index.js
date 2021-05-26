@@ -9,7 +9,7 @@ const server = http.createServer(app);
 const { Server } = require('socket.io');
 const io = new Server(server, {
   cors: {
-    origin: 'https://mystifying-bardeen-9951c5.netlify.app/',
+    origin: 'http://localhost:3001',
     methods: ['GET', 'POST']                                                       
   }
 });
@@ -22,7 +22,7 @@ dotenv.config();
 
 const PORT = process.env.PORT || 3000;
 
-app.get('/draft', (req, res) => {
+app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
@@ -35,7 +35,7 @@ let userThreeDrafted = [];
 const interval = 1000;
 let i = 0;
 let j = 0;
-const time = 20;
+const time = 5;
 let numberOfPlayers = 3
 io.on('connection', (socket) => {
 
@@ -47,6 +47,7 @@ io.on('connection', (socket) => {
     io.emit('logged-in', users);
 
     if(users.length === numberOfPlayers) {
+      users.push('')
       let myInterval = setInterval(() => {
         console.log('timer started')
         j++
@@ -56,9 +57,10 @@ io.on('connection', (socket) => {
             i++
             j = 0;
             io.emit('change', draftedPlayers)
-            if(i === numberOfPlayers)  { 
+            if(i === (numberOfPlayers))  {
+
               clearInterval(myInterval) 
-            io.emit
+              io.emit('current-player', users[i])
             
             }
             // io.emit('currentUser', users[i])
