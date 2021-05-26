@@ -40,8 +40,8 @@ io.on('connection', (socket) => {
 
   console.log('connected')
   socket.on('logged-in', user => {
-    
-    socket.emit('logged-in', users)
+    //timer on start game
+    io.emit('logged-in', users)
     let myInterval = setInterval(() => {
       j++
       io.emit('start', users[i], time, j);
@@ -59,8 +59,8 @@ io.on('connection', (socket) => {
     
     users.push({user: user, socketId: socket.id})
     console.log(users)
-    if(users.length === 3){
-      socket.emit('logged-in', users)
+    
+      io.emit('logged-in', users)
       socket.on('stateChange', change => {
         console.log(change)
         draftedPlayers.push(change);
@@ -73,7 +73,7 @@ io.on('connection', (socket) => {
         
       })
 
-    }
+    
     // console.log(users)
   })
  
