@@ -28,15 +28,15 @@ app.get('/', (req, res) => {
 });
 
 server.listen(PORT, () => console.log(`Listening on ${PORT}`));
-const users = [];
-const draftedPlayers = [];
+let users = [];
+let draftedPlayers = [];
 let userOneDrafted = [];
 let userTwoDrafted = [];
 let userThreeDrafted = [];
-const interval = 1000;
+let interval = 1000;
 let i = 0;
 let j = 0;
-const time = 5;
+let time = 5;
 let numberOfPlayers = 3
 io.on('connection', (socket) => {
 
