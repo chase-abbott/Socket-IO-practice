@@ -62,6 +62,7 @@ io.on('connection', (socket) => {
 
               clearInterval(myInterval) 
               io.emit('current-player', users[i])
+              users = [];
             
             }
             // io.emit('currentUser', users[i])
