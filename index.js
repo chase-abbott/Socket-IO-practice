@@ -7,10 +7,11 @@ app.use(cors());
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require('socket.io');
+// const { disconnect } = require('process');
 const io = new Server(server, {
   cors: {
     origin: 'https://mystifying-bardeen-9951c5.netlify.app',
-    // origin: 'http://localhost:3000',
+    // origin: 'http://localhost:3001',
     methods: ['GET', 'POST']                                                       
   }
 });
@@ -37,7 +38,7 @@ let interval = 1000;
 let i = 0;
 let j = 0;
 let time = 15;
-let numberOfPlayers = 3
+let numberOfPlayers = 3;
 io.on('connection', (socket) => {
 
   console.log('connected');
@@ -47,31 +48,37 @@ io.on('connection', (socket) => {
     console.log(users);
     io.emit('logged-in', users);
 
-    if(users.length === numberOfPlayers) {
-      users.push('')
+    if (users.length === numberOfPlayers) {
+      users.push('');
+      console.log('timer started');
       let myInterval = setInterval(() => {
-        console.log('timer started')
-        j++
-        console.log(users[i])
+       
+        j++;
+        // console.log(users[i])
         io.emit('start', users[i], time, j);
-          if(j === time){ 
-            i++
-            j = 0;
-            io.emit('change', draftedPlayers)
-            if(i === (numberOfPlayers))  {
+        if (j === time){ 
+          i++;
+          j = 0;
+          io.emit('change', draftedPlayers);
+          if (i === (numberOfPlayers)) {
 
-              clearInterval(myInterval) 
-              io.emit('current-player', users[i])
-              users = [];
-            
-            }
+            clearInterval(myInterval); 
+            io.emit('current-player', users[i]);
+            users = []
+            i = 0;
+            draftedPlayers = [];
+            userOneDrafted = [];
+            userTwoDrafted = [];
+            userThreeDrafted = [];
+             
+          }
             // io.emit('currentUser', users[i])
             // io.emit('mess', 'times up') 
 
              // clearInterval(myInterval)
             
-          }
-    }, interval);
+        }
+      }, interval);
      
 
     }
@@ -86,40 +93,40 @@ io.on('connection', (socket) => {
   socket.on('stateChange', change => {
     console.log(change);
     draftedPlayers.push(change);
-    if(users[0]) userOneDrafted = getUserOneDrafted(users, draftedPlayers);
-    if(users[1]) userTwoDrafted = getUserTwoDrafted(users, draftedPlayers);
-    if(users[2]) userThreeDrafted = getUserThreeDrafted(users, draftedPlayers);
+    if (users[0]) userOneDrafted = getUserOneDrafted(users, draftedPlayers);
+    if (users[1]) userTwoDrafted = getUserTwoDrafted(users, draftedPlayers);
+    if (users[2]) userThreeDrafted = getUserThreeDrafted(users, draftedPlayers);
     io.emit('stateChange', draftedPlayers, userOneDrafted, userTwoDrafted, userThreeDrafted);
 
   });
 
     
   // console.log(users)
- socket.on('disconnect', () => {
-   userOneDrafted = [];
-   userTwoDrafted = [];
-   userThreeDrafted = [];
-   draftedPlayers = [];
- })
+  socket.on('disconnect', () => {
+    console.log('disconnected');
+
+    console.log(users);
+ 
+  });
  
 
 });
 
 
 
-function getUserOneDrafted (users, draftedPlayers){
+function getUserOneDrafted(users, draftedPlayers){
   const userOneDrafted = draftedPlayers.filter(player => {
     return player.userName === users[0].user;
   });
   return userOneDrafted;
 }
-function getUserTwoDrafted (users, draftedPlayers){
+function getUserTwoDrafted(users, draftedPlayers){
   const userTwoDrafted = draftedPlayers.filter(player => {
     return player.userName === users[1].user;
   });
   return userTwoDrafted;
 }
-function getUserThreeDrafted (users, draftedPlayers){
+function getUserThreeDrafted(users, draftedPlayers){
   const userThreeDrafted = draftedPlayers.filter(player => {
     return player.userName === users[2].user;
   });
