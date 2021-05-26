@@ -7,7 +7,6 @@ app.use(cors());
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
-
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:3001",
@@ -15,6 +14,10 @@ const io = new Server(server, {
   }
 })
 
+ // restoring state
+ //socket integeration run on same server but differant port
+ //checking authentication on socket, send initial authenticate message
+//  io.emit('logged in', users1)
 dotenv.config();   
 
 const PORT = process.env.PORT || 3000;
@@ -29,33 +32,78 @@ const draftedPlayers = [];
 let userOneDrafted = []
 let userTwoDrafted = []
 let userThreeDrafted = []
+const interval = 1000;
+let i = 0;
+let j = 0;
+const time = 20
 io.on('connection', (socket) => {
- // restoring state
- //socket integeration run on same server but differant port
- //checking authentication on socket, send initial authenticate message
-//  io.emit('logged in', users1)
+
   console.log('connected')
   socket.on('logged-in', user => {
-    if(users.length < 3){
-      users.push({user: user, socketId: socket.id})
-    }
+    
+    socket.emit('logged-in', users)
+    let myInterval = setInterval(() => {
+      j++
+      io.emit('start', users[i], time, j);
+        if(j === time){ 
+          i++
+          clearInterval(myInterval)
+          j = 0;
+          io.emit('currentUser', users[i])
+          io.emit('mess', 'times up') 
+          
+        }
+  }, interval);
+
+
+    
+    users.push({user: user, socketId: socket.id})
+    console.log(users)
     if(users.length === 3){
       socket.emit('logged-in', users)
+      socket.on('stateChange', change => {
+        console.log(change)
+        draftedPlayers.push(change);
+        if(users[0]) userOneDrafted = getUserOneDrafted(users, draftedPlayers)
+        if(users[1]) userTwoDrafted = getUserTwoDrafted(users, draftedPlayers)
+        if(users[2]) userThreeDrafted = getUserThreeDrafted(users, draftedPlayers)
+        io.emit('stateChange', draftedPlayers, userOneDrafted, userTwoDrafted, userThreeDrafted)
+
+
+        
+      })
+
     }
-    console.log(users)
+    // console.log(users)
   })
-  socket.on('stateChange', change => {
-    console.log(change)
-    draftedPlayers.push(change);
-    userOneDrafted = getUserOneDrafted(users, draftedPlayers)
-    userTwoDrafted = getUserTwoDrafted(users, draftedPlayers)
-    userThreeDrafted = getUserThreeDrafted(users, draftedPlayers)
-    // console.log('drafted players', draftedPlayers)
-    // console.log('user1', userOneDrafted, 'user2', userTwoDrafted, 'user3', userThreeDrafted)
-    io.emit('stateChange', draftedPlayers, userOneDrafted, userTwoDrafted, userThreeDrafted)
-  })
+ 
 
 });
+
+
+
+function getUserOneDrafted (users, draftedPlayers){
+  const userOneDrafted = draftedPlayers.filter(player => {
+      return player.userName === users[0].user;
+  });
+   return userOneDrafted
+}
+function getUserTwoDrafted (users, draftedPlayers){
+  const userTwoDrafted = draftedPlayers.filter(player => {
+      return player.userName === users[1].user;
+  });
+   return userTwoDrafted
+}
+function getUserThreeDrafted (users, draftedPlayers){
+  const userThreeDrafted = draftedPlayers.filter(player => {
+      return player.userName === users[2].user;
+  });
+   return userThreeDrafted
+}
+
+
+
+
 
 // let i = 0;
 // let j = 0;
@@ -104,22 +152,3 @@ io.on('connection', (socket) => {
   //   io.emit('change', change)
 
   // })
-
-function getUserOneDrafted (users, draftedPlayers){
-  const userOneDrafted = draftedPlayers.filter(player => {
-      return player.userName === users[0].user;
-  });
-   return userOneDrafted
-}
-function getUserTwoDrafted (users, draftedPlayers){
-  const userTwoDrafted = draftedPlayers.filter(player => {
-      return player.userName === users[1].user;
-  });
-   return userTwoDrafted
-}
-function getUserThreeDrafted (users, draftedPlayers){
-  const userThreeDrafted = draftedPlayers.filter(player => {
-      return player.userName === users[2].user;
-  });
-   return userThreeDrafted
-}
