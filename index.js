@@ -10,8 +10,8 @@ const { Server } = require('socket.io');
 // const { disconnect } = require('process');
 const io = new Server(server, {
   cors: {
-    origin: 'https://mystifying-bardeen-9951c5.netlify.app',
-    // origin: 'http://localhost:3001',
+    // origin: 'https://mystifying-bardeen-9951c5.netlify.app',
+    origin: 'http://localhost:3001',
     methods: ['GET', 'POST']                                                       
   }
 });
@@ -37,7 +37,7 @@ let userThreeDrafted = [];
 let interval = 1000;
 let i = 0;
 let j = 0;
-let time = 15;
+let time = 25;
 let numberOfPlayers = 3;
 io.on('connection', (socket) => {
 
@@ -90,13 +90,13 @@ io.on('connection', (socket) => {
 
   
     
-  socket.on('stateChange', change => {
-    console.log(change);
+  socket.on('stateChange', (change, players) => {
+    console.log(players);
     draftedPlayers.push(change);
     if (users[0]) userOneDrafted = getUserOneDrafted(users, draftedPlayers);
     if (users[1]) userTwoDrafted = getUserTwoDrafted(users, draftedPlayers);
     if (users[2]) userThreeDrafted = getUserThreeDrafted(users, draftedPlayers);
-    io.emit('stateChange', draftedPlayers, userOneDrafted, userTwoDrafted, userThreeDrafted);
+    io.emit('stateChange', players, draftedPlayers, userOneDrafted, userTwoDrafted, userThreeDrafted);
 
   });
 
