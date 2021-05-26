@@ -23,7 +23,7 @@ dotenv.config();
 
 const PORT = process.env.PORT || 3000;
 
-app.get('/draft', (req, res) => {
+app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
