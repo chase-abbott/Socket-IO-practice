@@ -9,7 +9,8 @@ const server = http.createServer(app);
 const { Server } = require('socket.io');
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:3001',
+    origin: 'https://mystifying-bardeen-9951c5.netlify.app/',
+    // origin: 'http://localhost:3001',
     methods: ['GET', 'POST']                                                       
   }
 });
@@ -22,7 +23,7 @@ dotenv.config();
 
 const PORT = process.env.PORT || 3000;
 
-app.get('/', (req, res) => {
+app.get('/draft', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
