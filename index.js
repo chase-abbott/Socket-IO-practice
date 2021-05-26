@@ -36,6 +36,7 @@ const interval = 1000;
 let i = 0;
 let j = 0;
 const time = 20;
+let numberOfPlayers = 3
 io.on('connection', (socket) => {
 
   console.log('connected');
@@ -45,17 +46,21 @@ io.on('connection', (socket) => {
     console.log(users);
     io.emit('logged-in', users);
 
-    if(users.length === 3) {
+    if(users.length === numberOfPlayers) {
       let myInterval = setInterval(() => {
         console.log('timer started')
         j++
+        console.log(users[i])
         io.emit('start', users[i], time, j);
           if(j === time){ 
             i++
-            clearInterval(myInterval)
             j = 0;
-            io.emit('currentUser', users[i])
-            io.emit('mess', 'times up') 
+            io.emit('change', draftedPlayers)
+            if(i === numberOfPlayers)  { clearInterval(myInterval) ;}
+            // io.emit('currentUser', users[i])
+            // io.emit('mess', 'times up') 
+
+             // clearInterval(myInterval)
             
           }
     }, interval);
