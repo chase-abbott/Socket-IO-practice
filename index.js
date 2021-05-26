@@ -40,25 +40,27 @@ io.on('connection', (socket) => {
 
   console.log('connected')
   socket.on('logged-in', user => {
-    //timer on start game
-    io.emit('logged-in', users)
-    let myInterval = setInterval(() => {
-      j++
-      io.emit('start', users[i], time, j);
-        if(j === time){ 
-          i++
-          clearInterval(myInterval)
-          j = 0;
-          io.emit('currentUser', users[i])
-          io.emit('mess', 'times up') 
-          
-        }
-  }, interval);
-
-
-    
+     
     users.push({user: user, socketId: socket.id})
     console.log(users)
+    io.emit('logged-in', users)
+    })
+
+    //timer on start game
+  //   io.emit('logged-in', users)
+  //   let myInterval = setInterval(() => {
+  //     j++
+  //     io.emit('start', users[i], time, j);
+  //       if(j === time){ 
+  //         i++
+  //         clearInterval(myInterval)
+  //         j = 0;
+  //         io.emit('currentUser', users[i])
+  //         io.emit('mess', 'times up') 
+          
+  //       }
+  // }, interval);
+   
     
       io.emit('logged-in', users)
       socket.on('stateChange', change => {
@@ -75,7 +77,7 @@ io.on('connection', (socket) => {
 
     
     // console.log(users)
-  })
+ 
  
 
 });
