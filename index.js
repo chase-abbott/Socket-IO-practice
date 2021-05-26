@@ -95,7 +95,12 @@ io.on('connection', (socket) => {
 
     
   // console.log(users)
- 
+ socket.on('disconnect', () => {
+   userOneDrafted = [];
+   userTwoDrafted = [];
+   userThreeDrafted = [];
+   draftedPlayers = []
+ })
  
 
 });
