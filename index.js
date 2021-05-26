@@ -16,10 +16,7 @@ const io = new Server(server, {
   }
 });
 
-// restoring state
-//socket integeration run on same server but differant port
-//checking authentication on socket, send initial authenticate message
-//  io.emit('logged in', users1)
+
 dotenv.config();   
 
 const PORT = process.env.PORT || 3000;
