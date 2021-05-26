@@ -10,8 +10,8 @@ const { Server } = require('socket.io');
 // const { disconnect } = require('process');
 const io = new Server(server, {
   cors: {
-    // origin: 'https://mystifying-bardeen-9951c5.netlify.app',
-    origin: 'http://localhost:3001',
+    origin: 'https://mystifying-bardeen-9951c5.netlify.app',
+    // origin: 'http://localhost:3001',
     methods: ['GET', 'POST']                                                       
   }
 });
