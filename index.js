@@ -34,13 +34,12 @@ let userThreeDrafted = [];
 let interval = 1000;
 let i = 0;
 let j = 0;
-let time = 5;
+let time = 10;
 let numberOfPlayers = 3;
 io.on('connection', (socket) => {
   console.log('connected');
   socket.on('logged-in', user => {
-     
-    users.push({ user: user, socketId: socket.id });
+    users.push(user);
     console.log(users);
     io.emit('logged-in', users);
 
@@ -87,7 +86,7 @@ io.on('connection', (socket) => {
   
     
   socket.on('stateChange', (change, players) => {
-    console.log(players);
+    
     draftedPlayers.push(change);
     if (users[0]) userOneDrafted = getUserOneDrafted(users, draftedPlayers);
     if (users[1]) userTwoDrafted = getUserTwoDrafted(users, draftedPlayers);
@@ -112,19 +111,19 @@ io.on('connection', (socket) => {
 
 function getUserOneDrafted(users, draftedPlayers){
   const userOneDrafted = draftedPlayers.filter(player => {
-    return player.userName === users[0].user;
+    return player.userId === users[0].userId;
   });
   return userOneDrafted;
 }
 function getUserTwoDrafted(users, draftedPlayers){
   const userTwoDrafted = draftedPlayers.filter(player => {
-    return player.userName === users[1].user;
+    return player.userId === users[1].userId;
   });
   return userTwoDrafted;
 }
 function getUserThreeDrafted(users, draftedPlayers){
   const userThreeDrafted = draftedPlayers.filter(player => {
-    return player.userName === users[2].user;
+    return player.userId === users[2].userId;
   });
   return userThreeDrafted;
 }
