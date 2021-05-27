@@ -31,8 +31,8 @@ let userTwoDrafted = [];
 let userThreeDrafted = [];
 let interval = 1000;
 let userIndex = 0;
-let seconds = 15;
-let draftTime = 15;
+let seconds = 20;
+let draftTime = 20;
 let numberOfPlayers = 3;
 
 let messages = []
@@ -57,7 +57,7 @@ io.on('connection', (socket) => {
         // console.log(users[userIndex].userId, userOneDrafted)
         // console.log(users[userIndex])
         io.emit('start', users[userIndex], draftTime, seconds);
-        if (currentPlayer && currentPlayer.length >= 5 || seconds === 0){ 
+        if (currentPlayer && currentPlayer.length >= 10 || seconds === 0){ 
           console.log('next player')
           userIndex++;
           seconds = draftTime;
