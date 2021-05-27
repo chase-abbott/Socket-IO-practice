@@ -35,6 +35,7 @@ let seconds = 5;
 let draftTime = 5;
 let numberOfPlayers = 3;
 
+let messages = []
 io.on('connection', (socket) => {
   console.log('connected');
 
@@ -66,9 +67,7 @@ io.on('connection', (socket) => {
             userOneDrafted = [];
             userTwoDrafted = [];
             userThreeDrafted = [];
-            io.emit('end-draft')
-
-           
+            io.emit('end-draft');
           }
         }
       }, interval);
@@ -82,7 +81,12 @@ io.on('connection', (socket) => {
     if (users[1]) userTwoDrafted = getUserTwoDrafted(users, draftedPlayers);
     if (users[2]) userThreeDrafted = getUserThreeDrafted(users, draftedPlayers);
     io.emit('state-change', players, draftedPlayers, userOneDrafted, userTwoDrafted, userThreeDrafted);
-
+  });
+ 
+  socket.on('chat-message', (msg) => {
+    messages = [...messages, msg]
+    console.log(messages)
+    io.emit('chat-message', messages);  
   });
 
   // console.log(users)
@@ -90,7 +94,7 @@ io.on('connection', (socket) => {
     console.log('disconnected');
     console.log(users);
   });
- 
+
 
 });
 
