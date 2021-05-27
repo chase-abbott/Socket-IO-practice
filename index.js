@@ -10,8 +10,8 @@ const { Server } = require('socket.io');
 dotenv.config();  
 const io = new Server(server, {
   cors: {
-    origin: 'https://mystifying-bardeen-9951c5.netlify.app',
-    // origin: 'http://localhost:3001',
+    // origin: 'https://mystifying-bardeen-9951c5.netlify.app',
+    
     methods: ['GET', 'POST']                                                       
   }
 });
@@ -29,7 +29,7 @@ let draftedPlayers = [];
 let userOneDrafted = [];
 let userTwoDrafted = [];
 let userThreeDrafted = [];
-let interval = 1000;
+let interval = 3000;
 let userIndex = 0;
 let seconds = 20;
 let draftTime = 20;
@@ -51,21 +51,23 @@ io.on('connection', (socket) => {
       let myInterval = setInterval(() => {
        
         seconds--;
-        let currentPlayer = currentPlayerArray(users[userIndex], userOneDrafted, userTwoDrafted, userThreeDrafted)
-       
+        // let currentPlayer = currentPlayerArray(users[userIndex], userOneDrafted, userTwoDrafted, userThreeDrafted)
+        
         
         // console.log(users[userIndex].userId, userOneDrafted)
         // console.log(users[userIndex])
         io.emit('start', users[userIndex], draftTime, seconds);
-        if (currentPlayer && currentPlayer.length >= 10 || seconds === 0){ 
-          console.log('next player')
-          userIndex++;
-          seconds = draftTime;
-          // io.emit('change', draftedPlayers);
-          if (userIndex === numberOfPlayers) {
+        // if ( seconds === 0){ 
+        //   console.log('next player')
+        //   // userIndex++;
+        //   seconds = draftTime;
+        //   // io.emit('change', draftedPlayers);
+          if (draftedPlayers.length === 30) {
+            console.log(draftedPlayers.length)
             clearInterval(myInterval); 
             //workaround to not have list displayed after last player turn
-            io.emit('current-user', users[userIndex]);
+            console.log(userOneDrafted.length, userTwoDrafted.length, userThreeDrafted.length)
+            io.emit('current-user', '');
             users = [];
             userIndex = 0;
             draftedPlayers = [];
@@ -74,18 +76,27 @@ io.on('connection', (socket) => {
             userThreeDrafted = [];
             io.emit('end-draft');
           }
-        }
+        // }
       }, interval);
     }
   });   
 
   socket.on('state-change', (change, players) => {
-    console.log(change);
+    // console.log(change);
     draftedPlayers.push(change);
     if (users[0]) userOneDrafted = getUserOneDrafted(users, draftedPlayers);
     if (users[1]) userTwoDrafted = getUserTwoDrafted(users, draftedPlayers);
     if (users[2]) userThreeDrafted = getUserThreeDrafted(users, draftedPlayers);
     io.emit('state-change', players, draftedPlayers, userOneDrafted, userTwoDrafted, userThreeDrafted);
+    console.log(userIndex)
+  
+      userIndex ++
+
+      if(userIndex === 3) {
+        userIndex = 0
+      }
+    
+    
   });
  
   socket.on('chat-message', (msg) => {
