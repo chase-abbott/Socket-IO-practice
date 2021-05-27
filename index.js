@@ -31,8 +31,8 @@ let userTwoDrafted = [];
 let userThreeDrafted = [];
 let interval = 1000;
 let userIndex = 0;
-let seconds = 5;
-let draftTime = 5;
+let seconds = 15;
+let draftTime = 15;
 let numberOfPlayers = 3;
 
 let messages = []
@@ -51,9 +51,14 @@ io.on('connection', (socket) => {
       let myInterval = setInterval(() => {
        
         seconds--;
-        // console.log(users[i])
+        let currentPlayer = currentPlayerArray(users[userIndex], userOneDrafted, userTwoDrafted, userThreeDrafted)
+       
+        
+        // console.log(users[userIndex].userId, userOneDrafted)
+        // console.log(users[userIndex])
         io.emit('start', users[userIndex], draftTime, seconds);
-        if (seconds === 0){ 
+        if (currentPlayer && currentPlayer.length >= 5 || seconds === 0){ 
+          console.log('next player')
           userIndex++;
           seconds = draftTime;
           // io.emit('change', draftedPlayers);
@@ -98,6 +103,16 @@ io.on('connection', (socket) => {
 
 });
 
+function currentPlayerArray(user, playerOneDrafted, playerTwoDrafted, playerThreeDrafted) {
+
+  if( playerOneDrafted.length > 0 &&  playerOneDrafted[0].userId === user.userId) {
+    return playerOneDrafted
+  } else if (playerTwoDrafted.length > 0 &&  playerTwoDrafted[0].userId === user.userId){
+    return playerTwoDrafted
+  } else if (playerThreeDrafted.length > 0 &&  playerThreeDrafted[0].userId === user.userId){
+    return playerThreeDrafted
+  }
+}
 
 
 function getUserOneDrafted(users, draftedPlayers){
