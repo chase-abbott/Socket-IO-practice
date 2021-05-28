@@ -103,7 +103,7 @@ io.on('connection', (socket) => {
       
       console.log(msg)
       // users = []
-      while(draftedPlayers.length < 12) {
+      while(draftedPlayers.length < 30) {
         
         draftedPlayers.push(':')
         console.log(draftedPlayers.length)
@@ -132,24 +132,6 @@ function getUserDrafted(user, draftedPlayers){
   return userOneDrafted;
 }
 
-function getUserOneDrafted(users, draftedPlayers){
-  const userOneDrafted = draftedPlayers.filter(player => {
-    return player.userId === users[0].userId;
-  });
-  return userOneDrafted;
-}
-function getUserTwoDrafted(users, draftedPlayers){
-  const userTwoDrafted = draftedPlayers.filter(player => {
-    return player.userId === users[1].userId;
-  });
-  return userTwoDrafted;
-}
-function getUserThreeDrafted(users, draftedPlayers){
-  const userThreeDrafted = draftedPlayers.filter(player => {
-    return player.userId === users[2].userId;
-  });
-  return userThreeDrafted;
-}
 
 
 // function currentPlayerArray(user, playerOneDrafted, playerTwoDrafted, playerThreeDrafted) {
