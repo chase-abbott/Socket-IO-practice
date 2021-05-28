@@ -11,7 +11,7 @@ dotenv.config();
 const io = new Server(server, {
   cors: {
     // origin: 'https://mystifying-bardeen-9951c5.netlify.app',
-    
+    origin: 'http://localhost:3001',
     methods: ['GET', 'POST']                                                       
   }
 });
@@ -38,7 +38,7 @@ let numberOfPlayers = 3;
 let messages = []
 io.on('connection', (socket) => {
   console.log('connected');
-
+  
   socket.on('logged-in', user => {
      
     users.push(user);
@@ -62,7 +62,7 @@ io.on('connection', (socket) => {
         //   // userIndex++;
         //   seconds = draftTime;
         //   // io.emit('change', draftedPlayers);
-          if (draftedPlayers.length === 30) {
+          if (draftedPlayers.length === 6) {
             console.log(draftedPlayers.length)
             clearInterval(myInterval); 
             //workaround to not have list displayed after last player turn
