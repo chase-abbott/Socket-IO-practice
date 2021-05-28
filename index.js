@@ -31,14 +31,14 @@ let userTwoDrafted = [];
 let userThreeDrafted = [];
 let interval = 1000;
 let userIndex = 0;
-let seconds = 20;
-let draftTime = 20;
+let seconds = 5;
+let draftTime = 5;
 let numberOfPlayers = 3;
 
 let messages = []
 io.on('connection', (socket) => {
   console.log('connected');
-
+  
   socket.on('logged-in', user => {
      
     users.push(user);
@@ -46,26 +46,27 @@ io.on('connection', (socket) => {
     io.emit('logged-in', users);
 
     if (users.length === numberOfPlayers) {
-      users.push('');
+      
       console.log('timer started');
       let myInterval = setInterval(() => {
        
         seconds--;
-        let currentPlayer = currentPlayerArray(users[userIndex], userOneDrafted, userTwoDrafted, userThreeDrafted)
-       
-        
-        // console.log(users[userIndex].userId, userOneDrafted)
-        // console.log(users[userIndex])
+      
         io.emit('start', users[userIndex], draftTime, seconds);
-        if (currentPlayer && currentPlayer.length >= 10 || seconds === 0){ 
+        if ( seconds === 0){ 
           console.log('next player')
+          
           userIndex++;
-          seconds = draftTime;
-          // io.emit('change', draftedPlayers);
-          if (userIndex === numberOfPlayers) {
-            clearInterval(myInterval); 
-            //workaround to not have list displayed after last player turn
-            io.emit('current-user', users[userIndex]);
+          if(userIndex === 3) {
+            userIndex = 0
+          }
+          seconds = draftTime; }
+        //   // io.emit('change', draftedPlayers);
+          if (draftedPlayers.length === 30) {
+            console.log(draftedPlayers.length)
+            clearInterval(myInterval);
+            console.log(userOneDrafted.length, userTwoDrafted.length, userThreeDrafted.length)
+            io.emit('current-user', '');
             users = [];
             userIndex = 0;
             draftedPlayers = [];
@@ -74,18 +75,24 @@ io.on('connection', (socket) => {
             userThreeDrafted = [];
             io.emit('end-draft');
           }
-        }
+        // }
       }, interval);
     }
   });   
 
   socket.on('state-change', (change, players) => {
-    console.log(change);
+    // console.log(change);
     draftedPlayers.push(change);
     if (users[0]) userOneDrafted = getUserOneDrafted(users, draftedPlayers);
     if (users[1]) userTwoDrafted = getUserTwoDrafted(users, draftedPlayers);
     if (users[2]) userThreeDrafted = getUserThreeDrafted(users, draftedPlayers);
     io.emit('state-change', players, draftedPlayers, userOneDrafted, userTwoDrafted, userThreeDrafted);
+    console.log(userIndex)
+      userIndex ++
+      seconds = draftTime
+      if(userIndex === 3) {
+        userIndex = 0
+      }
   });
  
   socket.on('chat-message', (msg) => {
@@ -135,7 +142,7 @@ function getUserThreeDrafted(users, draftedPlayers){
 }
 
 
-
+//change
 
 
 // let i = 0;
@@ -185,3 +192,9 @@ function getUserThreeDrafted(users, draftedPlayers){
 //   io.emit('change', change)
 
 // })
+
+  // let currentPlayer = currentPlayerArray(users[userIndex], userOneDrafted, userTwoDrafted, userThreeDrafted)
+        
+        
+        // console.log(users[userIndex].userId, userOneDrafted)
+        // console.log(users[userIndex])
