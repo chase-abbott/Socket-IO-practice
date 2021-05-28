@@ -11,7 +11,6 @@ dotenv.config();
 const io = new Server(server, {
   cors: {
     origin: 'https://mystifying-bardeen-9951c5.netlify.app',
-    // origin: 'http://localhost:3001',
     methods: ['GET', 'POST']                                                       
   }
 });
@@ -31,12 +30,12 @@ let userTwoDrafted = [];
 let userThreeDrafted = [];
 let interval = 1000;
 let userIndex = 0;
-let seconds = 30;
-let draftTime = 30;
+let seconds = 45;
+let draftTime = 45;
 let numberOfPlayers = 3;
 
 
-let messages = []
+let messages = [];
 io.on('connection', (socket) => {
   console.log('connected');
   
@@ -55,65 +54,66 @@ io.on('connection', (socket) => {
       
         io.emit('start', users[userIndex], draftTime, seconds);
         if (seconds === 0){ 
-          console.log('next player')
+          console.log('next player');
           
           userIndex++;
-          if(userIndex === 3) {
-            userIndex = 0
-          }
-          seconds = draftTime; }
-        //   // io.emit('change', draftedPlayers);
-          if (draftedPlayers.length === 30) {
-            console.log(draftedPlayers.length)
-            clearInterval(myInterval);
-            console.log(userOneDrafted.length, userTwoDrafted.length, userThreeDrafted.length)
-            io.emit('current-user', '');
-            users = [];
+          if (userIndex === 3) {
             userIndex = 0;
-            draftedPlayers = [];
-            userOneDrafted = [];
-            userTwoDrafted = [];
-            userThreeDrafted = [];
-            messages = [];
-            io.emit('end-draft');
           }
+          seconds = draftTime; 
+        
+        }
+         
+        if (draftedPlayers.length === 30) {
+          console.log(draftedPlayers.length);
+          clearInterval(myInterval);
+          console.log(userOneDrafted.length, userTwoDrafted.length, userThreeDrafted.length);
+          io.emit('current-user', '');
+          users = [];
+          userIndex = 0;
+          draftedPlayers = [];
+          userOneDrafted = [];
+          userTwoDrafted = [];
+          userThreeDrafted = [];
+          messages = [];
+          io.emit('end-draft');
+        }
       }, interval);
     }
   });   
 
   socket.on('state-change', (change, players) => {
-    // console.log(change);
+    console.log(change);
     draftedPlayers.push(change);
     if (users[0]) userOneDrafted = getUserDrafted(users[0], draftedPlayers);
     if (users[1]) userTwoDrafted = getUserDrafted(users[1], draftedPlayers);
     if (users[2]) userThreeDrafted = getUserDrafted(users[2], draftedPlayers);
     io.emit('state-change', players, draftedPlayers, userOneDrafted, userTwoDrafted, userThreeDrafted);
-    console.log(userIndex)
-      userIndex ++
-      seconds = draftTime
-      if(userIndex === 3) {
-        userIndex = 0
-      }
+    console.log(userIndex);
+    userIndex ++;
+    seconds = draftTime;
+    if (userIndex === 3) {
+      userIndex = 0;
+    }
   });
  
   socket.on('chat-message', (msg) => {
-    messages = [...messages, msg]
-    let splitMessage = msg.split(':')[1]
-    if(splitMessage === ' RESETDRAFT') {
+    messages = [...messages, msg];
+    let splitMessage = msg.split(':')[1];
+    if (splitMessage === ' RESETDRAFT') {
       
-      console.log(msg)
-      // users = []
-      while(draftedPlayers.length < 30) {
+      console.log(msg);
+    
+      while (draftedPlayers.length < 30) {
         
-        draftedPlayers.push(':')
-        console.log(draftedPlayers.length)
+        draftedPlayers.push(':');
+        console.log(draftedPlayers.length);
       }
     }
-    console.log(messages)
+    console.log(messages);
     io.emit('chat-message', messages);  
   });
 
-  // console.log(users)
   socket.on('disconnect', () => {
     console.log('disconnected');
     console.log(users);
@@ -122,7 +122,7 @@ io.on('connection', (socket) => {
 
 });
 
-// 
+
 
 
 function getUserDrafted(user, draftedPlayers){
