@@ -62,7 +62,7 @@ io.on('connection', (socket) => {
           }
           seconds = draftTime; }
         //   // io.emit('change', draftedPlayers);
-          if (draftedPlayers.length === 30) {
+          if (draftedPlayers.length === 12) {
             console.log(draftedPlayers.length)
             clearInterval(myInterval);
             console.log(userOneDrafted.length, userTwoDrafted.length, userThreeDrafted.length)
@@ -73,6 +73,7 @@ io.on('connection', (socket) => {
             userOneDrafted = [];
             userTwoDrafted = [];
             userThreeDrafted = [];
+            messages = [];
             io.emit('end-draft');
           }
         // }
