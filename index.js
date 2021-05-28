@@ -10,8 +10,8 @@ const { Server } = require('socket.io');
 dotenv.config();  
 const io = new Server(server, {
   cors: {
-    origin: 'https://mystifying-bardeen-9951c5.netlify.app',
-    // origin: 'http://localhost:3001',
+    // origin: 'https://mystifying-bardeen-9951c5.netlify.app',
+    origin: 'http://localhost:3001',
     methods: ['GET', 'POST']                                                       
   }
 });
@@ -34,6 +34,7 @@ let userIndex = 0;
 let seconds = 5;
 let draftTime = 5;
 let numberOfPlayers = 3;
+let reset = false;
 
 let messages = []
 io.on('connection', (socket) => {
@@ -53,7 +54,7 @@ io.on('connection', (socket) => {
         seconds--;
       
         io.emit('start', users[userIndex], draftTime, seconds);
-        if ( seconds === 0){ 
+        if (seconds === 0){ 
           console.log('next player')
           
           userIndex++;
@@ -98,6 +99,17 @@ io.on('connection', (socket) => {
  
   socket.on('chat-message', (msg) => {
     messages = [...messages, msg]
+    let splitMessage = msg.split(':')[1]
+    if(splitMessage === ' RESETDRAFT') {
+      
+      console.log(msg)
+      // users = []
+      while(draftedPlayers.length < 12) {
+        
+        draftedPlayers.push(':')
+        console.log(draftedPlayers.length)
+      }
+    }
     console.log(messages)
     io.emit('chat-message', messages);  
   });
