@@ -23,11 +23,11 @@ app.get('/', (req, res) => {
 
 server.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
-let users = [];
-let draftedPlayers = [];
-let userOneDrafted = [];
-let userTwoDrafted = [];
-let userThreeDrafted = [];
+const users = [];
+const draftedPlayers = [];
+const userOneDrafted = [];
+const userTwoDrafted = [];
+const userThreeDrafted = [];
 let interval = 1000;
 let userIndex = 0;
 let seconds = 45;
@@ -35,7 +35,10 @@ let draftTime = 45;
 let numberOfPlayers = 3;
 
 
-let messages = [];
+// ideally these are saved to db and when
+// user connects you back fill a certain amount of messages
+const messages = [];
+
 io.on('connection', (socket) => {
   console.log('connected');
   
@@ -56,12 +59,8 @@ io.on('connection', (socket) => {
         if (seconds === 0){ 
           console.log('next player');
           
-          userIndex++;
-          if (userIndex === 3) {
-            userIndex = 0;
-          }
+          userIndex = ++userIndex % numberOfPlayers;
           seconds = draftTime; 
-        
         }
          
         if (draftedPlayers.length === 30) {
@@ -85,6 +84,7 @@ io.on('connection', (socket) => {
   socket.on('state-change', (change, players) => {
     console.log(change);
     draftedPlayers.push(change);
+    // use an array of users here, less flexible and code is ugly
     if (users[0]) userOneDrafted = getUserDrafted(users[0], draftedPlayers);
     if (users[1]) userTwoDrafted = getUserDrafted(users[1], draftedPlayers);
     if (users[2]) userThreeDrafted = getUserDrafted(users[2], draftedPlayers);
@@ -100,8 +100,9 @@ io.on('connection', (socket) => {
   socket.on('chat-message', (msg) => {
     messages = [...messages, msg];
     let splitMessage = msg.split(':')[1];
-    if (splitMessage === ' RESETDRAFT') {
-      
+    if (splitMessage === ' RESETDRAFT') { // why the space at the start?
+      // oh, this is an easter egg tickler for getting the draft to reset - haha
+
       console.log(msg);
     
       while (draftedPlayers.length < 30) {
